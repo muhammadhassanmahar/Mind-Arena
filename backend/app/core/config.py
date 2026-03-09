@@ -1,5 +1,6 @@
+# app/core/config.py
 import os
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -15,6 +16,10 @@ class Settings(BaseSettings):
         "DATABASE_URL",
         "sqlite:///./puzzle_contest.db"
     )
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 
 settings = Settings()
