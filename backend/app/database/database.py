@@ -1,16 +1,18 @@
-# app/database/database.py
-
 from motor.motor_asyncio import AsyncIOMotorClient
-from bson.objectid import ObjectId
-from typing import Optional, Dict, Any
+import os
 
-# ---------------- MongoDB Connection ---------------- #
-MONGO_DETAILS = "mongodb://localhost:27017"  # Change this to your MongoDB URI
-DATABASE_NAME = "puzzle_contest_db"          # Database name
+# MongoDB connection URL
+MONGO_DETAILS = os.getenv("MONGO_DETAILS", "mongodb://localhost:27017")
 
-# MongoDB client and database
+# Database name
+DATABASE_NAME = "puzzle_contest_db"
+
+# MongoDB client
 client = AsyncIOMotorClient(MONGO_DETAILS)
-db = client[DATABASE_NAME]  # ✅ Exporting 'db' object for services
+
+# Database
+db = client[DATABASE_NAME]
+
 
 # Collections
 users_collection = db.get_collection("users")
@@ -19,10 +21,14 @@ results_collection = db.get_collection("results")
 wallets_collection = db.get_collection("wallets")
 
 
-# ---------------- Helper Functions ---------------- #
+# Dependency for FastAPI (used in services like leaderboard)
+def get_db():
+    return db
 
-def user_helper(user: Dict[str, Any]) -> dict:
-    """Convert a user document to a dictionary"""
+
+# ---------------- Helper functions ---------------- #
+
+def user_helper(user: dict) -> dict:
     return {
         "id": str(user.get("_id")),
         "uid": user.get("uid", ""),
@@ -32,8 +38,7 @@ def user_helper(user: Dict[str, Any]) -> dict:
     }
 
 
-def contest_helper(contest: Dict[str, Any]) -> dict:
-    """Convert a contest document to a dictionary"""
+def contest_helper(contest: dict) -> dict:
     return {
         "id": str(contest.get("_id")),
         "title": contest.get("title", ""),
@@ -43,8 +48,7 @@ def contest_helper(contest: Dict[str, Any]) -> dict:
     }
 
 
-def result_helper(result: Dict[str, Any]) -> dict:
-    """Convert a result document to a dictionary"""
+def result_helper(result: dict) -> dict:
     return {
         "id": str(result.get("_id")),
         "contest_id": result.get("contest_id", ""),
@@ -53,8 +57,7 @@ def result_helper(result: Dict[str, Any]) -> dict:
     }
 
 
-def wallet_helper(wallet: Dict[str, Any]) -> dict:
-    """Convert a wallet document to a dictionary"""
+def wallet_helper(wallet: dict) -> dict:
     return {
         "id": str(wallet.get("_id")),
         "user_id": wallet.get("user_id", ""),
