@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 
 from app.core.config import settings
-from app.models.models import User, Contest, Wallet, Leaderboard  # All your Beanie models
+from app.models.models import UserModel, ContestModel, WalletModel, LeaderboardModel
 from app.routes import auth_routes, contest_routes, wallet_routes, leaderboard_routes
 
 app = FastAPI(
@@ -15,7 +15,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this in production to your frontend URL
+    allow_origins=["*"],  # Change this in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,10 +44,20 @@ async def app_init():
     """
     Initialize crucial application services
     """
+
     # MongoDB Client
     client = AsyncIOMotorClient(settings.MONGO_URI)
     db = client[settings.MONGO_DB_NAME]
 
     # Initialize Beanie with your document models
-    await init_beanie(database=db, document_models=[User, Contest, Wallet, Leaderboard])
+    await init_beanie(
+        database=db,
+        document_models=[
+            UserModel,
+            ContestModel,
+            WalletModel,
+            LeaderboardModel
+        ]
+    )
+
     print("✅ Database initialized successfully")
