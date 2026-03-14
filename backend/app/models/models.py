@@ -1,12 +1,12 @@
 from typing import Optional
 from datetime import datetime
-from beanie import Document, Indexed
+from beanie import Document
 from pydantic import Field, ConfigDict
 
 
 # ===== User Model =====
 class UserModel(Document):
-    email: Indexed(str) = Field(unique=True)
+    email: str = Field(..., unique=True, index=True)
     name: str
     password_hash: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
