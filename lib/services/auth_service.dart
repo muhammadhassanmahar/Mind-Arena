@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../services/api_service.dart';
 import '../core/constants/api_urls.dart';
 
@@ -11,14 +12,13 @@ class AuthService {
     required String name,
   }) async {
     try {
-
-      // 🔹 Firebase Signup
+      // Firebase Signup
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // 🔹 Send user to backend
+      // Send user to backend
       try {
         await ApiService.postRequest(ApiUrls.createUser, {
           "name": name,
@@ -26,21 +26,16 @@ class AuthService {
           "uid": credential.user!.uid,
         });
       } catch (e) {
-        print("Backend user creation failed: $e");
+        debugPrint("Backend user creation failed: $e");
       }
 
       return credential;
-
     } on FirebaseAuthException catch (e) {
-
-      print("Firebase signup error: ${e.message}");
+      debugPrint("Firebase signup error: ${e.message}");
       rethrow;
-
     } catch (e) {
-
-      print("Signup error: $e");
+      debugPrint("Signup error: $e");
       rethrow;
-
     }
   }
 
@@ -54,7 +49,7 @@ class AuthService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      print("Login error: ${e.message}");
+      debugPrint("Login error: ${e.message}");
       rethrow;
     }
   }
