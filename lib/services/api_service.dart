@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ApiService {
+
   /// Returns headers with Firebase Auth token if user is logged in
   static Future<Map<String, String>> _headers() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -16,71 +18,113 @@ class ApiService {
 
   /// Generic GET request
   static Future<dynamic> getRequest(String url) async {
-    final headers = await _headers();
+    try {
+      final headers = await _headers();
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: headers,
-    );
+      final response = await http.get(
+        Uri.parse(url),
+        headers: headers,
+      );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception(
-          'GET request failed with status: ${response.statusCode}, body: ${response.body}');
+      debugPrint("GET: $url");
+      debugPrint("Status: ${response.statusCode}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (response.body.isEmpty) return null;
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(
+          "GET request failed: ${response.statusCode} - ${response.body}",
+        );
+      }
+    } catch (e) {
+      debugPrint("GET ERROR: $e");
+      rethrow;
     }
   }
 
   /// Generic POST request with JSON body
-  static Future<dynamic> postRequest(String url, Map<String, dynamic> data) async {
-    final headers = await _headers();
+  static Future<dynamic> postRequest(
+      String url, Map<String, dynamic> data) async {
+    try {
+      final headers = await _headers();
 
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: jsonEncode(data),
-    );
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(data),
+      );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception(
-          'POST request failed with status: ${response.statusCode}, body: ${response.body}');
+      debugPrint("POST: $url");
+      debugPrint("Status: ${response.statusCode}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (response.body.isEmpty) return null;
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(
+          "POST request failed: ${response.statusCode} - ${response.body}",
+        );
+      }
+    } catch (e) {
+      debugPrint("POST ERROR: $e");
+      rethrow;
     }
   }
 
-  /// Optional: PUT request
-  static Future<dynamic> putRequest(String url, Map<String, dynamic> data) async {
-    final headers = await _headers();
+  /// PUT request
+  static Future<dynamic> putRequest(
+      String url, Map<String, dynamic> data) async {
+    try {
+      final headers = await _headers();
 
-    final response = await http.put(
-      Uri.parse(url),
-      headers: headers,
-      body: jsonEncode(data),
-    );
+      final response = await http.put(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(data),
+      );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception(
-          'PUT request failed with status: ${response.statusCode}, body: ${response.body}');
+      debugPrint("PUT: $url");
+      debugPrint("Status: ${response.statusCode}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (response.body.isEmpty) return null;
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(
+          "PUT request failed: ${response.statusCode} - ${response.body}",
+        );
+      }
+    } catch (e) {
+      debugPrint("PUT ERROR: $e");
+      rethrow;
     }
   }
 
-  /// Optional: DELETE request
+  /// DELETE request
   static Future<dynamic> deleteRequest(String url) async {
-    final headers = await _headers();
+    try {
+      final headers = await _headers();
 
-    final response = await http.delete(
-      Uri.parse(url),
-      headers: headers,
-    );
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: headers,
+      );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception(
-          'DELETE request failed with status: ${response.statusCode}, body: ${response.body}');
+      debugPrint("DELETE: $url");
+      debugPrint("Status: ${response.statusCode}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (response.body.isEmpty) return null;
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(
+          "DELETE request failed: ${response.statusCode} - ${response.body}",
+        );
+      }
+    } catch (e) {
+      debugPrint("DELETE ERROR: $e");
+      rethrow;
     }
   }
 }
