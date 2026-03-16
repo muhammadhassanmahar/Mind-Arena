@@ -4,6 +4,7 @@ import '../models/contest_model.dart';
 import '../models/leaderboard_model.dart';
 
 class ContestProvider extends ChangeNotifier {
+
   final ContestService _contestService = ContestService();
 
   bool _isLoading = false;
@@ -22,13 +23,19 @@ class ContestProvider extends ChangeNotifier {
 
       final response = await _contestService.getTodayContests();
 
-      _contests = (response as List)
-          .map((e) => ContestModel.fromJson(e))
-          .toList();
+      // Backend returns single contest object
+      if (response != null) {
+        _contests = [ContestModel.fromJson(response)];
+      } else {
+        _contests = [];
+      }
 
       _isLoading = false;
       notifyListeners();
+
     } catch (e) {
+
+      _contests = [];
       _isLoading = false;
       notifyListeners();
     }
@@ -36,9 +43,13 @@ class ContestProvider extends ChangeNotifier {
 
   Future<bool> joinContest(String contestId) async {
     try {
+
       await _contestService.joinContest(contestId);
+
       return true;
+
     } catch (e) {
+
       return false;
     }
   }
@@ -47,6 +58,7 @@ class ContestProvider extends ChangeNotifier {
     required String contestId,
     required int solveTime,
   }) async {
+
     await _contestService.submitResult(
       contestId: contestId,
       solveTime: solveTime,
@@ -54,7 +66,9 @@ class ContestProvider extends ChangeNotifier {
   }
 
   Future<void> fetchLeaderboard(String contestId) async {
+
     try {
+
       _isLoading = true;
       notifyListeners();
 
@@ -66,7 +80,10 @@ class ContestProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
     } catch (e) {
+
+      _leaderboard = [];
       _isLoading = false;
       notifyListeners();
     }
