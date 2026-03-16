@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     Future.microtask(() {
+      if (!mounted) return;
       Provider.of<ContestProvider>(context, listen: false).fetchContests();
     });
   }
@@ -36,34 +37,46 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: contestProvider.isLoading
           ? const LoadingWidget()
-          : ListView.builder(
-              itemCount: contestProvider.contests.length,
-              itemBuilder: (context, index) {
-
-                ContestModel contest =
-                    contestProvider.contests[index];
-
-                return Card(
-                  margin: const EdgeInsets.all(12),
-                  child: ListTile(
-                    title: Text("Entry Fee: ${contest.entryFee}"),
-                    subtitle: Text(
-                        "Players: ${contest.playersJoined}/${contest.maxPlayers}"),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-
-                        Navigator.pushNamed(
-                          context,
-                          "/contestDetail",
-                          arguments: contest,
-                        );
-                      },
-                      child: const Text("Join"),
-                    ),
+          : contestProvider.contests.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No contests available today",
+                    style: TextStyle(fontSize: 16),
                   ),
-                );
-              },
-            ),
+                )
+              : ListView.builder(
+                  itemCount: contestProvider.contests.length,
+                  itemBuilder: (context, index) {
+
+                    ContestModel contest =
+                        contestProvider.contests[index];
+
+                    return Card(
+                      margin: const EdgeInsets.all(12),
+                      elevation: 3,
+                      child: ListTile(
+                        title: Text(
+                          "Entry Fee: ${contest.entryFee}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          "Players: ${contest.playersJoined}/${contest.maxPlayers}",
+                        ),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/contestDetail",
+                              arguments: contest,
+                            );
+                          },
+                          child: const Text("Join"),
+                        ),
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }
